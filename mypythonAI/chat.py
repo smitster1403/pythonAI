@@ -66,7 +66,7 @@ if  __name__ == "__main__":
                  "Anytime!",
                  "No problem!",
                  "Always here to help!"])
-        elif any(i in bot.text for i in ["exit", "close", "bye"]):
+        elif any(i in bot.text for i in ["exit", "close", "bye", "goodbye"]):
             res = np.random.choice(
                 ["See you soon!",
                  "Bye!",
