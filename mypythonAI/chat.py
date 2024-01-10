@@ -83,4 +83,3 @@ if  __name__ == "__main__":
         bot.text_to_speech(res)
         
     print("-- shutting down --")
-
