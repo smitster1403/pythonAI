@@ -68,10 +68,10 @@ if  __name__ == "__main__":
                  "Always here to help!"])
         elif any(i in bot.text for i in ["exit", "close", "bye", "goodbye"]):
             res = np.random.choice(
-                ["See you soon!",
-                 "Bye!",
-                 "Goodbye!",
-                 "Ciao!"])
+                ["See you soon bhenchod!",
+                 "Bye bhenchod!",
+                 "Goodbye bhenchod!",
+                 "Ciao bhenchod!"])
             ex = False
         else:
             if bot.text == "ERROR":
