@@ -2,12 +2,20 @@
 # my first AI ChatBot
 
 import time
+import requests
 import numpy as np
 import speech_recognition as sr
+from googlesearch import search
 from gtts import gTTS
-import os
+from lxml import html
+import os, string
 import datetime
 import transformers
+import playsound as ps
+from bs4 import BeautifulSoup
+import pygame
+import tensorflow as tf
+
 
 class ChatBot():
     def __init__(self, name):
@@ -32,7 +40,13 @@ class ChatBot():
     
     @staticmethod 
     def action_time():
-        return datetime.datetime.now().strftime("%H:%M")        
+        return datetime.datetime.now().strftime("%H:%M")    
+    
+    def do_search():
+        query = bot.text
+        search_results = list(search(query, tld="co.in", num=10, stop=3, pause=1))
+        page = requests.get(search_results[0])
+        
     
     @staticmethod
     def text_to_speech(text):
@@ -53,6 +67,10 @@ if  __name__ == "__main__":
     nlp = transformers.pipeline("conversational", model="microsoft/DialoGPT-medium")
     os.environ["TOKENIZERS_PARALLELISM"] = "true"
     ex = True
+    fallback = "Sorry, I didn't get that."
+    pygame.mixer.init()
+    pygame.mixer.music.load("/Users/smitster1403/Desktop/pythonprojects/pythonAI/mypythonAI/start.mp3")
+    pygame.mixer.music.play()
     while ex:
         bot.speech_to_text()
         # wakeup
@@ -73,13 +91,16 @@ if  __name__ == "__main__":
                  "Goodbye!",
                  "Ciao!"])
             ex = False
+            pygame.mixer.music.play()
+        # elif any(i in bot.text for i in ["what", "how"]):
+        #     bot.do_search()
         else:
-            if bot.text == "ERROR":
-                res = "Sorry, I didn't get that."
-            else:
-                chat = nlp(transformers.Conversation(bot.text), pad_token_id=50256)
-                res = str(chat)
-                res = res[res.find("bot >> ")+6:].strip()
+            # if bot.text == "ERROR":
+            res = fallback
+            # else:
+            #     chat = nlp(transformers.Conversation(bot.text), pad_token_id=50256)
+            #     res = str(chat)
+            #     res = res[res.find("bot >> ")+6:].strip()
         bot.text_to_speech(res)
         
     print("-- shutting down --")
