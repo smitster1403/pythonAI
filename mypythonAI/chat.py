@@ -1,6 +1,6 @@
 # Smit saraiya
 # my first AI ChatBot
-
+from urllib.error import URLError
 import time
 import requests
 import numpy as np
@@ -64,7 +64,7 @@ class ChatBot():
         os.remove("response.mp3")
         
         
-        
+# -- MAIN --
 if  __name__ == "__main__":
     bot = ChatBot(name="Iris")
     nlp = transformers.pipeline("conversational", model="microsoft/DialoGPT-medium")
@@ -104,9 +104,15 @@ if  __name__ == "__main__":
             pygame.mixer.music.play()
         elif "search for" in bot.text:
             query = bot.text.split("search for ", 1)[1]
-            res = "\n\nHere are the responses I got from google...\n\n"
-            for j in search(query, tld="com",num=10, stop = 10, pause=2):
-                print(j)
+            res = np.random.choice(["\nHere are the responses I got from google...", "\nSure, here is what I found on google...", "\nThis is what Google returns for"+query])
+            for attempt in range(5):
+                try:
+                    for j in search(query, tld="com",num=10, stop = 10, pause=4):
+                        print(j)
+                    break
+                except URLError:
+                    print("Connection reset by peer, retrying...")
+                
         else:
             # fallback text to say when input speech is not understood.
             res = np.random.choice(fallback)
