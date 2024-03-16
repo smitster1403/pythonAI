@@ -14,7 +14,15 @@ import transformers
 import playsound as ps
 from bs4 import BeautifulSoup
 import pygame
+import certifi
+
+print(certifi.where())
+os.environ['SSL_CERT_FILE'] = certifi.where()
 import tensorflow as tf
+try:
+    from googlesearch import search
+except ImportError:
+    print("Module 'google' does not exist")
 
 
 class ChatBot():
@@ -42,11 +50,6 @@ class ChatBot():
     def action_time():
         return datetime.datetime.now().strftime("%H:%M")    
     
-    def do_search():
-        query = bot.text
-        search_results = list(search(query, tld="co.in", num=10, stop=3, pause=1))
-        page = requests.get(search_results[0])
-        
     
     @staticmethod
     def text_to_speech(text):
@@ -67,7 +70,8 @@ if  __name__ == "__main__":
     nlp = transformers.pipeline("conversational", model="microsoft/DialoGPT-medium")
     os.environ["TOKENIZERS_PARALLELISM"] = "true"
     ex = True
-    fallback = "Sorry, I didn't get that."
+    fallback = ["Sorry, I didn't get that.", "Sorry, come again?", "Maybe you spoke gibberish. Please repeat yourself."]
+    # Startup sound
     pygame.mixer.init()
     pygame.mixer.music.load("/Users/smitster1403/Desktop/pythonprojects/pythonAI/mypythonAI/start.mp3")
     pygame.mixer.music.play()
@@ -79,12 +83,18 @@ if  __name__ == "__main__":
         elif "time" in bot.text:
             res = "The time is " + str(bot.action_time())
         elif any(i in bot.text for i in ["thank", "thanks"]):
+            # Responses to being thanked.
             res = np.random.choice(
                 ["You're Welcome!",
                  "Anytime!",
                  "No problem!",
-                 "Always here to help!"])
+                 "Always here to help!"]) + np.random.choice([
+                     " Anything else you need me to do?",
+                     " What else can I assist you with?",
+                     " You ask and I deliver!"
+                 ])
         elif any(i in bot.text for i in ["exit", "close", "bye", "goodbye"]):
+            # Salutations - leaving
             res = np.random.choice(
                 ["See you soon!",
                  "Bye!",
@@ -92,15 +102,14 @@ if  __name__ == "__main__":
                  "Ciao!"])
             ex = False
             pygame.mixer.music.play()
-        # elif any(i in bot.text for i in ["what", "how"]):
-        #     bot.do_search()
+        elif any(i in bot.text for i in ["search"]):
+            query = bot.text
+            res = "\n\nHere are the responses I got from google...\n\n"
+            for j in search(query, tld="com",num=10, stop = 10, pause=2):
+                print(j)
         else:
-            # if bot.text == "ERROR":
-            res = fallback
-            # else:
-            #     chat = nlp(transformers.Conversation(bot.text), pad_token_id=50256)
-            #     res = str(chat)
-            #     res = res[res.find("bot >> ")+6:].strip()
+            # fallback text to say when input speech is not understood.
+            res = np.random.choice(fallback)
         bot.text_to_speech(res)
         
     print("-- shutting down --")
