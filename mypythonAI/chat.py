@@ -44,7 +44,7 @@ class ChatBot():
             print("me ---> ERROR", str(e))
     
     def wake_up(self, text):
-        return True if self.name in text.lower() else False
+        return True if self.name.lower() in text.lower() else False
     
     @staticmethod 
     def action_time():
@@ -66,7 +66,7 @@ class ChatBot():
         
         
 if  __name__ == "__main__":
-    bot = ChatBot(name="computer")
+    bot = ChatBot(name="Iris")
     nlp = transformers.pipeline("conversational", model="microsoft/DialoGPT-medium")
     os.environ["TOKENIZERS_PARALLELISM"] = "true"
     ex = True
@@ -79,7 +79,7 @@ if  __name__ == "__main__":
         bot.speech_to_text()
         # wakeup
         if bot.wake_up(bot.text) is True:
-            res = "Hello, my name is computer. What can I do for you?"
+            res = "Hello, my name is Iris. What can I do for you?"
         elif "time" in bot.text:
             res = "The time is " + str(bot.action_time())
         elif any(i in bot.text for i in ["thank", "thanks"]):
@@ -102,8 +102,8 @@ if  __name__ == "__main__":
                  "Ciao!"])
             ex = False
             pygame.mixer.music.play()
-        elif any(i in bot.text for i in ["search"]):
-            query = bot.text
+        elif "search for" in bot.text:
+            query = bot.text.split("search for ", 1)[1]
             res = "\n\nHere are the responses I got from google...\n\n"
             for j in search(query, tld="com",num=10, stop = 10, pause=2):
                 print(j)
